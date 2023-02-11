@@ -58,5 +58,3 @@ link_libraries(${OpenMP_CXX_LIBRARIES})
 endif(OpenMP_FOUND)
 
 add_executable(el3_s3d main.cpp mesh.hpp pde.cpp export.cpp tet.hpp utils.hpp face.hpp mesh.cpp names.h pde.hpp tmv.hpp vertex.hpp)
-add_executable(convert convert.cpp)
-add_executable(convert2 convert2.cpp)
