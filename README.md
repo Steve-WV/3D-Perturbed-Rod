@@ -1,7 +1,7 @@
 # 3D-Perturbed-Rod
 ### 3D-Model for Mechanical Test on Randomly Perturbed Cylinder
 
-**C++**–code developed for three-dimensional P1 finite element approximation. The approximation is used for evaluating an effective elastic energy for a three-dimensional cylinder geometry. 
+**C++**–code developed for three-dimensional P1 finite element approximation. The approximation is used for evaluating an effective Young's modulus for a three-dimensional cylinder geometry which is perturbed by correlated shifts of layers along the longitudinal axis. 
 
 For more details on the usage of the code please check the **"README.txt"** file.
 
