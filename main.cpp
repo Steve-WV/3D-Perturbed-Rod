@@ -69,7 +69,6 @@ int main(int argc, char *argv[]) {
 			    
 			    // Perform the Cholesky decomposition only once
 			    pde->Perform_Cholesky();
-			    
 			    pde->Assemble();
 			    pde->Solve();
 			    pde->CalcYoungs(k);
@@ -144,6 +143,9 @@ int main(int argc, char *argv[]) {
 		pde->Assemble();
 		pde->SolveWithGuess();
 		pde->CalcYoungs(k);
+		
+		// Export perturbed cylinder with compression test as *.vtk. Caution: the file is huge. Process in paraview using warp by vector function
+		//pde->Export_Vol(obj_fname+std::to_string(i));
 		
 		}
 	}
