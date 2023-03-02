@@ -9,7 +9,7 @@
 #include <iostream>
 #include <string>
 #include <random>
-#include <ctime>        // std::time
+#include <ctime>     
 #include <cstdlib>     
 #include <algorithm> 
 #include <cmath> 
@@ -22,7 +22,6 @@ using namespace std;
 
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
-
 using namespace Eigen;
 
 #include "pde.hpp"
@@ -35,18 +34,13 @@ using namespace Eigen;
 #include <Eigen/Sparse>
 #include <Eigen/IterativeLinearSolvers>
 
+// Generators for distributions 
+std::default_random_engine generator_norm1;
+std::default_random_engine generator_norm2;
 
-
-
-	// Generators for the distributions 
-		std::default_random_engine generator_norm1;
-		std::default_random_engine generator_norm2;
-
-	// generator for standard normal distribution
- 	std::normal_distribution<double> distribution_norm1(0.0,1.0);
+// Generator for standard normal distribution
+ std::normal_distribution<double> distribution_norm1(0.0,1.0);
 					
-
-
 inline double pos_part(double s)
 {
 		if (s>=0) {return s;} 
@@ -56,26 +50,21 @@ inline double pos_part(double s)
 		return 0.0; 
 	}
 
-
 inline double GKernel_Smoothing(std::vector<double> th1, std::vector<double> th2, double s, double b) {
 
 		int length = th2.size();		
-
 		double M=0.0;
 		double N= 0.0; 	
 		double scal=1/b;	
-
+	
 			for (int i=0; i < length; ++i) {
 				
 				M+= exp(-0.5*sqr(th1[i]-s)/sqr(scal));
 				N+= exp(-0.5*sqr(th1[i]-s)/sqr(scal))*th2[i];
 			} 					
 			
-				N*=(1/M);
-				//N*=(1/length);
-			
+		N*=(1/M);
 		return N; 
-
 }
 
 
@@ -84,7 +73,7 @@ void ImplicitPDESystem::Init_Rad(double rad1) {
 		double *r1p;
 		r1p=&h2;
 		*r1p= rad1;
-				
+	
 }	
 
 void ImplicitPDESystem::Init_Corr_Len(double l1, double l2) { 
@@ -116,7 +105,6 @@ void ImplicitPDESystem::Init_Coords(){
 	Y_Coord=Vec::Zero(m->VertexSize());
 	Z_Coord=Vec::Zero(m->VertexSize());
 
-
 auto vi = m->VertexBegin(), ve = m->VertexEnd();
 
 
@@ -124,13 +112,12 @@ auto vi = m->VertexBegin(), ve = m->VertexEnd();
 		
 	        double x = (*vi)->x();
 	        double y = (*vi)->y();
-					double z = (*vi)->z();
+		double z = (*vi)->z();
 					
-
-					int idx = (*vi)->Index_ref();
-					X_Coord[idx]=x;
-					Y_Coord[idx]=y;
-					Z_Coord[idx]=z;
+		int idx = (*vi)->Index_ref();
+		X_Coord[idx]=x;
+		Y_Coord[idx]=y;
+		Z_Coord[idx]=z;
 
 				}
 
@@ -212,7 +199,6 @@ void ImplicitPDESystem::Init(std::string config_file) {
 	std::cerr << "Difference : " << tr[0]-bl[0] << ", " << tr[1]-bl[1] << ", " << tr[2]-bl[2] << "." << std::endl;
 	std::cerr << "Area: " << (area=sqr(0.25*((tr[0]-bl[0])+(tr[1]-bl[1])))*pi) << "." << std::endl;
 	
-	
 	// lets set bc indicators
 	top = tr[2];
 	bottom = bl[2];
@@ -222,7 +208,6 @@ void ImplicitPDESystem::Init(std::string config_file) {
 	top_var *= len;
 	SetBC(); // we need boundary conditions.
 	m_size=20; // for computation of the number of z-elements = 5*m_size
-
 	Coords=Eigen::VectorXd::LinSpaced(m_size,bottom,top);
 
 	// now we can index...
@@ -249,10 +234,9 @@ void ImplicitPDESystem::Init(std::string config_file) {
 		(*vi)->SetIndex(j, idx_bdry);
 		++idx_bdry;
 	 }
- }
+     }
 }
 	std::cerr << "done; ";
-	
 	
 	std::cerr << "Preparing " << m->TetSize() << " Tets... ";
 	N_tet = 0;
@@ -285,43 +269,36 @@ void ImplicitPDESystem::Init(std::string config_file) {
 	omp_set_num_threads(numThreads); 
 #endif 
 	std::cerr << "ok; ";
-	
-
 	std::cerr << "zustandsvektor... ";
 	Z = Vec::Zero(N_dof);
 	U_Db = Vec::Zero(3*m->VertexSize()-N_dof);
 	FNeu = Vec::Zero(N_dof);
 	
 	vi = m->VertexBegin();
-
-
 	for (; vi!=ve; ++vi)
 		{
 		
 		for (int j=0; j<3; ++j) 
 	{
 			if (!(*vi)->DirBdry(j)) (*vi)->Attach_u(j, &Z[(*vi)->Index(j)]);
-	else (*vi)->Attach_u(j, &U_Db[(*vi)->Index(j)] );
+			else (*vi)->Attach_u(j, &U_Db[(*vi)->Index(j)] );
 
 	}
 }
 	
 	std::cerr << "ok; ";
-	InitBC();
-	
+	InitBC();	
 }
 
 
 void ImplicitPDESystem::Perform_Cholesky() {
-
-
-
+	
 	Mesh::VertexIt vi = m->VertexBegin(), ve = m->VertexEnd();
 	Vec3 bl = (*vi)->Coord(), tr = (*vi)->Coord();
 	for (; vi!=ve; ++vi) {
 		Vec3 coord = (*vi)->Coord();
 	}
-		// now we can index...
+	// now we can index...
 	std::cerr << "Indexing " << m->VertexSize() << " vertices, ";
 	vi = m->VertexBegin();
 	N_dof = 0;
@@ -330,7 +307,6 @@ void ImplicitPDESystem::Perform_Cholesky() {
 		{
 		for (int j=0; j<3; ++j) 
 			{
-
 					if ( !(*vi)->DirBdry(j) ) 
 					{
 							++N_dof;
@@ -363,9 +339,9 @@ void ImplicitPDESystem::Perform_Cholesky() {
 	Init_Coords();	
 	
 #ifdef EIGEN_HAS_OPENMP
-	std::cerr << "Eigen is running in parallel... ";
-	Eigen::setNbThreads(numThreads);
-	Eigen::initParallel(); 
+std::cerr << "Eigen is running in parallel... ";
+Eigen::setNbThreads(numThreads);
+Eigen::initParallel(); 
 #endif 
 
 std::cerr<< "Performing Cholesky-Decompostion" << std::endl;
@@ -375,14 +351,13 @@ std::cerr<< "Did it work?" << std::endl;
 // Performing Cholesky Decomposition for geometric perturbations; the decomposition needs to be performed only once
 	for (int i=1; i<2; ++i){
 	
-	LLT<Mat> lltOfA(KTL_new1);
-	KTL_Cholnew1= lltOfA.matrixL();  
+		LLT<Mat> lltOfA(KTL_new1);
+		KTL_Cholnew1= lltOfA.matrixL();  
 	
 	 	}
 	 	
-	  LLT<Mat> lltOfA(KTL_new2);
-	  KTL_Cholnew2= lltOfA.matrixL();
-
+LLT<Mat> lltOfA(KTL_new2);
+KTL_Cholnew2= lltOfA.matrixL();
 std::cerr<< "It worked!" << std::endl;
 }
 
@@ -395,28 +370,25 @@ KTL_new1=Mat(5*m_size,5*m_size);
 KTL_new2=Mat(5*m_size,5*m_size);
 double b1= 5*m_size-1;	
 
-
 // Computing entries of the covariance matrix for geomertic perturbations
 	for (int i=0; i < 5*m_size; ++i) {
 
 			double b=i;
 			z1=(b/b1);
-					
+		
 				for (int j=0;j < 5*m_size; ++j) {
 				
 					double c=j;
 					z2= c/b1;
 				
-				double ktl1 = exp(-(abs(z1-z2)/l_c1));
-				double ktl2 = exp(-(abs(z1-z2)/l_c2));
+					double ktl1 = exp(-(abs(z1-z2)/l_c1));
+					double ktl2 = exp(-(abs(z1-z2)/l_c2));
 								
-				KTL_new1(i,j)=ktl1;
-				KTL_new2(i,j)=ktl2;
+					KTL_new1(i,j)=ktl1;
+					KTL_new2(i,j)=ktl2;
 							
-					}
-											
-
-				}	
+					}									
+			}	
 		
 }
 
@@ -424,7 +396,6 @@ double b1= 5*m_size-1;
 void ImplicitPDESystem::Perform_Perturbation() {
 
 		std::vector<double> X,Y,Z,XYZ,Knots, HKLT,XX,YY,XX1,XX2;
-		//std::vector<double> X(m_size),Y(m_size),Z(m_size),Knots(m_size);
 		Vec eins =Vec::Ones(m-> VertexSize());	
 		std::cerr<< "Performing Geometric Perturbations..";
 		Prep_Norm();
@@ -435,7 +406,6 @@ void ImplicitPDESystem::Perform_Perturbation() {
 		KTL_Chol2 = sigma_new2*KTL_Cholnew1*C_norm2;
 		
 		double b22=5*m_size-1;
-
 		for (int i=0; i<5*m_size; ++i){
 		
 				double b11=i;
@@ -450,24 +420,23 @@ void ImplicitPDESystem::Perform_Perturbation() {
 	  	X2 = Vec::Zero(5*m_size);
 
 		double ll2=5*m_size-1;		
-	
- for (int i=0; i< 5*m_size; ++i){ 
+		for (int i=0; i< 5*m_size; ++i){ 
  	
- 	X1[i]+= (X[i]-X[0]);
- 	X2[i]+= (Y[i]-Y[0]);
+ 				X1[i]+= (X[i]-X[0]);
+ 				X2[i]+= (Y[i]-Y[0]);
  	
- 	XX1.push_back(X[i]-X[0]);
- 	XX2.push_back(Y[i]-Y[0]);
+ 				XX1.push_back(X[i]-X[0]);
+ 				XX2.push_back(Y[i]-Y[0]);
 
- }
+			 }
  
 	tk::spline spline1,spline2,spline3,spline4; 
   	spline1.set_points(Knots,XX1);
  	spline2.set_points(Knots,XX2);
  
-		X1_new = Vec::Zero(m-> VertexSize());
-	  	X2_new = Vec::Zero(m-> VertexSize());
-		X3_new = Vec::Zero(m-> VertexSize());
+	X1_new = Vec::Zero(m-> VertexSize());
+	X2_new = Vec::Zero(m-> VertexSize());
+	X3_new = Vec::Zero(m-> VertexSize());
  
   // Perform cubic spline interpolation; currently it is required that X is already sorted
  for (int i=0; i <  m-> VertexSize(); ++i){
@@ -481,7 +450,7 @@ int idx=0;
 Mesh::VertexIt vi = m->VertexBegin(), ve = m->VertexEnd();
 double ll=5*m_size-1;
 
-// change the values of the coordinate values; only for plane coordinates x1 and x2
+// change the values of the coordinates; only for plane coordinates x1 and x2
 	for (; vi!=ve; ++vi)
 		{
 		
@@ -489,9 +458,9 @@ double ll=5*m_size-1;
 		double x2=(*vi)-> m_coord.y();
 		double * point;
 		int j = floor(ll*((*vi)-> m_coord.z()));
+		
 		point = &((*vi)-> m_coord.x());
 		*point= X1_new[idx];
-
 		point = &((*vi)-> m_coord.y());
 		*point= X2_new[idx];
 	
@@ -500,20 +469,17 @@ double ll=5*m_size-1;
 		}
 }
 
-
 void ImplicitPDESystem::Assemble() {
 	std::cerr << "K... ";
 	PrepK();
 	std::cerr << "ok; "; 
 }
 
-
 // Generate random numbers V^i for computing density variation and geometric perturbation
 // via L*V^i using Cholesk decomposition
 void ImplicitPDESystem::Prep_Norm() {
 
 			double trans1, trans2,trans3,trans4;	
-
 			C_norm1=Vec::Zero(5*m_size);
 			C_norm2=Vec::Zero(5*m_size);
 
@@ -526,11 +492,9 @@ void ImplicitPDESystem::Prep_Norm() {
 					C_norm1[i]+= trans1; 
 					C_norm2[i]+= trans2;
 													
-					}
+			}
 }
 	
-		
-
 void ImplicitPDESystem::KLoop ( SpMat* th_k, Vec* th_b, Mesh::TetIt ti, Mesh::TetIt te ) {
 	
 	std::vector<T> vals_k;
@@ -650,15 +614,12 @@ void ImplicitPDESystem::CalcFNeu() {
 			if (!(vb->DirBdry(j))) FNeu[vb->Index(j)] += 1.0/3.0 * f[j];
 			if (!(vc->DirBdry(j))) FNeu[vc->Index(j)] += 1.0/3.0 * f[j];
 			
-			
-			
 		}
 		
 	}
 	
 	
 }
-
 
 void ImplicitPDESystem::SolveWithGuess() {
 	
@@ -739,7 +700,6 @@ void ImplicitPDESystem::ELoop ( double* th_e, Mesh::TetIt ti, Mesh::TetIt te ) {
 							
 						}
 					}
-
 			}
 		
 		}
