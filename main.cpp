@@ -12,15 +12,8 @@
 const double h1= 1.0;
 const double eps1=0.05;
 const double eps2=0.05;
-
 const double scaler=0.3;
-//const double scaler=0.2;
-//const double scaler=0.4;
-
 const double radi[5]= {0.25,0.1,0.05,0.025,0.01};
-
-//const double vece01[9]={0.00144, 0.00335, 0.001663, 0.00309, 0.00188, 0.00284, 0.00211, 0.00258, 0.00233};
-//const double vece02[9]={0.00209, 0.00454, 0.00233, 0.00416, 0.00257, 0.00380, 0.00281, 0.00342, 0.00305};
 
 int main(int argc, char *argv[]) {
 	
@@ -152,9 +145,6 @@ int main(int argc, char *argv[]) {
 		pde->SolveWithGuess();
 		pde->CalcYoungs(k);
 		
-	//pde->~ImplicitPDESystem();
-	//m->~Mesh();
-
 		}
 	}
     
