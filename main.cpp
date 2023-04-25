@@ -56,11 +56,13 @@ int main(int argc, char *argv[]) {
 		return(-1);
 	}
 	
-			Mesh* m = new Mesh();
-			m->Load(obj_fname);
-			ImplicitPDESystem* pde = new ImplicitPDESystem(m);	
+				
 
 	for (int k=0; k<5; ++k){
+		
+			    Mesh* m = new Mesh();
+			    m->Load(obj_fname);
+			    ImplicitPDESystem* pde = new ImplicitPDESystem(m);
 	
 			    pde-> Init_Corr_Len(eps1,eps1); 
 			    pde -> Init_Rad(radi[k]);
