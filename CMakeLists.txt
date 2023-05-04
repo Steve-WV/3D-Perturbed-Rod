@@ -3,7 +3,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake/Modules/")
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
-set(EIGEN3_INCLUDE_DIR ~/usr/eigen-3.3.9)
 set(CMAKE_BUILD_TYPE Release)
 project(el3_s3d CXX)
 
@@ -32,7 +31,7 @@ endif(VTK_FOUND)
 
 # Eigen3
 #set (EIGEN_USE_MKL_ALL) 
-#find_package(Eigen3 REQUIRED)
+find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
 # BLAS
